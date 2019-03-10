@@ -1,7 +1,7 @@
 from kivy.app import App
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.tabbedpanel import TabbedPanelHeader
-from kivy.uix.stacklayout import StackLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.lang import Builder
@@ -18,14 +18,21 @@ for kv in listdir(kv_path):
 class TabManager(TabbedPanel):
 	pass
 	
-class EditLayout(StackLayout):
+class EditLayout(BoxLayout):
+	def on_touch_down(self,touch):
+		 print('The touch is at position', touch.pos)
+	
+class ConfigLayout(BoxLayout):
 	pass
 	
-class ConfigLayout(StackLayout):
-	pass
-	
-class tab(TabbedPanelHeader):
-	pass
+class Tab(TabbedPanelHeader):
+	def __init__(self,**kwargs):
+		super(Tab, self).__init__()
+		self.text=kwargs.pop('title')
+		self.content=kwargs.pop('content')
+		tabber=kwargs.pop('tabber')
+		tabber.add_widget(self)
+		
 
 class flowideApp(App):
 	layout=TabManager()
@@ -33,13 +40,9 @@ class flowideApp(App):
 	configLayout=ConfigLayout()
 	
 	def build(self):
-		edit=TabbedPanelHeader(text="Edit")
-		self.layout.add_widget(edit)
-		edit.content=self.editLayout
+		Tab(title="Edit",tabber=self.layout,content=self.editLayout)
+		Tab(title="Configuration",tabber=self.layout,content=self.configLayout)
 		
-		edit=TabbedPanelHeader(text="Configuration")
-		self.layout.add_widget(edit)
-		edit.content=self.editLayout
 		
 		return self.layout
 		
